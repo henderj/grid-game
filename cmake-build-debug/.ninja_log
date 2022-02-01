@@ -1,0 +1,17 @@
+# ninja log v5
+0	12	1643652616174965369	build.ninja	d8b2cbf9ed2a837f
+0	475	1643652017491253497	CMakeFiles/grid_game.dir/main.cpp.o	d946572bae262983
+655	772	1643651079520582532	grid_game	3a649104fd8ff899
+1	132	1643652620194925295	CMakeFiles/grid_game.dir/src/LTimer.cpp.o	5ddf852c4efbf30
+0	512	1643652620574921501	CMakeFiles/grid_game.dir/src/LTexture.cpp.o	ab70b70c924574c8
+1	12361	1643652709414012124	CMakeFiles/grid_game.dir/main.cpp.o	d946572bae262983
+1	12361	1643652709402012250	CMakeFiles/grid_game.dir/src/LTexture.cpp.o	ab70b70c924574c8
+0	11014	1643652759025486433	CMakeFiles/grid_game.dir/main.cpp.o	d946572bae262983
+1	11014	1643652759029486390	CMakeFiles/grid_game.dir/src/Dot.cpp.o	f7c647b317388b59
+1	11014	1643652759029486390	CMakeFiles/grid_game.dir/src/LTexture.cpp.o	ab70b70c924574c8
+1	18545	1643652796909077340	CMakeFiles/grid_game.dir/main.cpp.o	d946572bae262983
+1	18545	1643652796697079647	CMakeFiles/grid_game.dir/src/LTexture.cpp.o	ab70b70c924574c8
+1	18545	1643652796841078080	CMakeFiles/grid_game.dir/src/Dot.cpp.o	f7c647b317388b59
+0	492	1643653071993948048	CMakeFiles/grid_game.dir/src/Dot.cpp.o	f7c647b317388b59
+1	498	1643653072001947953	CMakeFiles/grid_game.dir/src/LTexture.cpp.o	ab70b70c924574c8
+0	545	1643653072045947435	CMakeFiles/grid_game.dir/main.cpp.o	d946572bae262983
