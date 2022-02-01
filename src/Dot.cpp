@@ -5,7 +5,7 @@
 #include "Dot.h"
 #include "config.h"
 #include "LTexture.h"
-Dot::Dot(LTexture _texture)
+Dot::Dot(LTexture *_texture)
 {
     texture = _texture;
     //Initialize the position
@@ -93,5 +93,5 @@ void Dot::move(float timeStep)
 void Dot::render()
 {
     //Show the dot
-    texture.render((int)mPosX, (int)mPosY);
+    texture->render((int)mPosX, (int)mPosY);
 }

@@ -16,7 +16,7 @@ SDL_Window *gWindow = nullptr;
 SDL_Renderer *gRenderer = nullptr;
 
 //Scene textures
-LTexture gDotTexture;
+LTexture gDotTexture(gRenderer);
 
 //Starts up SDL and creates window
 bool init();
@@ -134,7 +134,7 @@ void doGame()
     SDL_Event e;
 
     //The dot that will be moving around on the screen
-    Dot dot(gDotTexture);
+    Dot dot(&gDotTexture);
 
     //Keeps track of time between steps
     LTimer stepTimer;

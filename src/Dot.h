@@ -20,7 +20,7 @@ public:
     static const int DOT_VEL = 640;
 
     //Initializes the variables
-    Dot(LTexture _texture);
+    Dot(LTexture *_texture);
 
     //Takes key presses and adjusts the dot's velocity
     void handleEvent(SDL_Event &e);
@@ -34,7 +34,7 @@ public:
 private:
     float mPosX, mPosY;
     float mVelX, mVelY;
-    LTexture texture;
+    LTexture *texture;
 };
 
 #endif //GRID_GAME_DOT_H
