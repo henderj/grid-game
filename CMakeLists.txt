@@ -1,18 +1,11 @@
-cmake_minimum_required(VERSION 3.16)
-project(grid_game)
+cmake_minimum_required(VERSION 3.0.0)
+project(grid-game VERSION 0.1.0)
 
-include_directories(${PROJECT_SOURCE_DIR}/src)
-file(GLOB all_SRCS
-        "${PROJECT_SOURCE_DIR}/src/*.cpp"
-        "${PROJECT_SOURCE_DIR}/src/*.h"
-        )
+include(CTest)
+enable_testing()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
+add_executable(grid-game main.cpp)
 
-set(CMAKE_CXX_STANDARD 20)
-
-add_executable(grid_game main.cpp ${all_SRCS})
-target_link_libraries(grid_game ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
