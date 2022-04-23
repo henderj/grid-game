@@ -4,113 +4,7 @@
 #include <random>
 
 #include "src/config.h"
-
-SDL_Rect GetSpriteRectFromSheet(const SDL_Point *pos)
-{
-    /*
-    Tilesheet information:
-    Tile size                 •  16px × 16px
-    Space between tiles       •  1px × 1px
-    ---
-    Total tiles (horizontal)  •  49 tiles
-    Total tiles (vertical)    •  22 tiles
-    ---
-    Total tiles in sheet      •  1078 tiles
-    */
-    SDL_Rect rect;
-    rect.w = TILESIZE;
-    rect.h = TILESIZE;
-    rect.x = pos->x * TILESIZE + pos->x;
-    rect.y = pos->y * TILESIZE + pos->y;
-    return rect;
-}
-
-SDL_Surface *CreateBlankSurface(int w, int h)
-{
-    /* Create a 32-bit surface with the bytes of each pixel in R,G,B,A order,
-           as expected by OpenGL for textures */
-    SDL_Surface *surface;
-    Uint32 rmask, gmask, bmask, amask;
-
-    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
-       on the endianness (byte order) of the machine */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-
-    surface = SDL_CreateRGBSurface(0, w, h, 32,
-                                   rmask, gmask, bmask, amask);
-    if (surface == NULL)
-    {
-        SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
-        exit(1);
-    }
-    return surface;
-}
-
-SDL_Surface *BuildWorld(SDL_Surface *sprites, int w, int h)
-{
-
-    const SDL_Point DIRT = {0, 0};
-    const SDL_Point DIRT_COURSE = {1, 0};
-    const SDL_Point GRASS = {5, 0};
-
-    const SDL_Point ground_types[3] = {DIRT,
-                                       DIRT_COURSE,
-                                       GRASS};
-
-    SDL_Surface *map_surface = CreateBlankSurface(w * TILESIZE, h * TILESIZE);
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(1, 3);
-
-    for (int x = 0; x < w; x++)
-    {
-        for (int y = 0; y < h; y++)
-        {
-            int index = distrib(gen);
-            SDL_Point tileType = ground_types[index];
-
-            SDL_Rect destrect;
-            destrect.x = x * TILESIZE;
-            destrect.y = y * TILESIZE;
-            destrect.w = TILESIZE;
-            destrect.h = TILESIZE;
-
-            const SDL_Rect srcrect = GetSpriteRectFromSheet(&tileType);
-
-            SDL_BlitSurface(sprites, &srcrect, map_surface, &destrect);
-        }
-    }
-
-    return map_surface;
-}
-
-class World
-{
-private:
-    /* data */
-public:
-    World(int w, int h);
-    ~World();
-};
-
-World::World(int w, int h)
-{
-}
-
-World::~World()
-{
-}
+#include "src/World.h"
 
 int main(int argc, char *argv[])
 {
@@ -132,7 +26,9 @@ int main(int argc, char *argv[])
     temp = IMG_Load("colored-transparent.png");
     SDL_Texture *spritesheet = SDL_CreateTextureFromSurface(rend, temp);
 
-    SDL_Surface *temp_map = BuildWorld(temp, 100, 100);
+    World world = World(100, 100);
+
+    SDL_Surface *temp_map = world.BuildWorld(temp);
     SDL_Texture *map = SDL_CreateTextureFromSurface(rend, temp_map);
 
     SDL_FreeSurface(temp_map);
