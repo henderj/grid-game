@@ -58,19 +58,3 @@ void World::Render(SDL_Renderer *rend, Camera *cam)
 
     SDL_RenderCopy(rend, map, nullptr, &mapRect);
 }
-
-/*
-def render(self, screen: Surface, cam: Camera):
-        surface_topleft_of_cam = ((cam.viewport.left + self.size[0] / 2) * TILESIZE, (cam.viewport.top + self.size[1] / 2) * TILESIZE)
-        topleft = (-surface_topleft_of_cam[0], -surface_topleft_of_cam[1])
-        world_surface = Surface(screen.get_size())
-        world_surface.blit(self.map_surface, topleft)
-        entities_to_draw = [e for e in self.entities if cam.viewport.colliderect(e.get_rect())]
-        entity_surface = Surface(screen.get_size())
-        for e in entities_to_draw:
-            offset = (e.pos - Vector2(cam.viewport.center)) * TILESIZE
-            topleft_offset = Vector2(entity_surface.get_rect().center) + offset
-            world_surface.blit(e.surface, topleft_offset)
-        screen.blit(world_surface, (0,0))
-
-*/
