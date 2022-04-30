@@ -4,7 +4,7 @@
 #include <random>
 
 #include "src/config.h"
-#include "src/World.h"
+#include "src/world.h"
 
 int main(int argc, char *argv[])
 {
