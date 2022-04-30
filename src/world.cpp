@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "config.h"
+#include "camera.h"
 #include <SDL2/SDL.h>
 #include <random>
 
@@ -13,11 +14,12 @@ World::World(int w, int h)
 
 World::~World()
 {
+    SDL_DestroyTexture(map);
 }
 
-SDL_Surface *World::BuildWorld(SDL_Surface *sprites)
+SDL_Surface *World::BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
 {
-    SDL_Surface *map_surface = CreateBlankSurface(this->width * TILESIZE, this->height * TILESIZE);
+    SDL_Surface *mapSurface = CreateBlankSurface(this->width * TILESIZE, this->height * TILESIZE);
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -38,9 +40,37 @@ SDL_Surface *World::BuildWorld(SDL_Surface *sprites)
 
             const SDL_Rect srcrect = GetSpriteRectFromSheet(&tileType);
 
-            SDL_BlitSurface(sprites, &srcrect, map_surface, &destrect);
+            SDL_BlitSurface(sprites, &srcrect, mapSurface, &destrect);
         }
     }
+    map = SDL_CreateTextureFromSurface(rend, mapSurface);
 
-    return map_surface;
+    return mapSurface;
 }
+
+void World::Render(SDL_Renderer *rend, Camera *cam)
+{
+    SDL_Rect mapRect;
+    mapRect.x = -((cam->pos.x + width / 2) * TILESIZE);
+    mapRect.y = -((cam->pos.y + height / 2) * TILESIZE);
+    mapRect.w = width * TILESIZE;
+    mapRect.h = height * TILESIZE;
+
+    SDL_RenderCopy(rend, map, nullptr, &mapRect);
+}
+
+/*
+def render(self, screen: Surface, cam: Camera):
+        surface_topleft_of_cam = ((cam.viewport.left + self.size[0] / 2) * TILESIZE, (cam.viewport.top + self.size[1] / 2) * TILESIZE)
+        topleft = (-surface_topleft_of_cam[0], -surface_topleft_of_cam[1])
+        world_surface = Surface(screen.get_size())
+        world_surface.blit(self.map_surface, topleft)
+        entities_to_draw = [e for e in self.entities if cam.viewport.colliderect(e.get_rect())]
+        entity_surface = Surface(screen.get_size())
+        for e in entities_to_draw:
+            offset = (e.pos - Vector2(cam.viewport.center)) * TILESIZE
+            topleft_offset = Vector2(entity_surface.get_rect().center) + offset
+            world_surface.blit(e.surface, topleft_offset)
+        screen.blit(world_surface, (0,0))
+
+*/
