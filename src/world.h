@@ -2,6 +2,8 @@
 
 #include <SDL2/SDL.h>
 #include "camera.h"
+#include "chicken.h"
+#include <vector>
 
 class World
 {
@@ -9,6 +11,7 @@ private:
     /* data */
     int width, height;
     SDL_Texture *map;
+    std::vector<Chicken> chickens;
 
     const SDL_Point DIRT = {0, 0};
     const SDL_Point DIRT_COURSE = {1, 0};
@@ -21,5 +24,6 @@ public:
     ~World();
 
     SDL_Surface *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites);
-    void Render(SDL_Renderer *rend, Camera *cam);
+    void Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites);
+    void Tick(int deltaTime);
 };

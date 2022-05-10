@@ -45,10 +45,17 @@ SDL_Surface *World::BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
     }
     map = SDL_CreateTextureFromSurface(rend, mapSurface);
 
+    SDL_Point cPos;
+    cPos.x = 0;
+    cPos.y = 0;
+    Chicken c = Chicken(cPos);
+
+    chickens.push_back(c);
+
     return mapSurface;
 }
 
-void World::Render(SDL_Renderer *rend, Camera *cam)
+void World::Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites)
 {
     SDL_Rect mapRect;
     mapRect.x = -((cam->pos.x + width / 2) * TILESIZE);
@@ -56,5 +63,30 @@ void World::Render(SDL_Renderer *rend, Camera *cam)
     mapRect.w = width * TILESIZE;
     mapRect.h = height * TILESIZE;
 
+    for (int i = 0; i < chickens.size(); i++)
+    {
+        SDL_Point pos = chickens[i].GetPosition();
+        if (!SDL_PointInRect(&pos, &mapRect))
+            continue;
+
+        SDL_Rect chickenRect;
+        chickenRect.x = ((pos.x - cam->pos.x) * TILESIZE) + SCREEN_CENTER_X;
+        chickenRect.y = ((pos.y - cam->pos.y) * TILESIZE) + SCREEN_CENTER_Y;
+        chickenRect.w = TILESIZE;
+        chickenRect.h = TILESIZE;
+
+        SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType());
+
+        SDL_RenderCopy(rend, sprites, &spriteRect, &chickenRect);
+    }
+
     SDL_RenderCopy(rend, map, nullptr, &mapRect);
+}
+
+void World::Tick(int deltaTime)
+{
+    for (int i = 0; i < chickens.size(); i++)
+    {
+        chickens[i].Tick(deltaTime);
+    }
 }

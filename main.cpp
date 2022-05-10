@@ -47,9 +47,13 @@ void PlayGame(SDL_Renderer *rend)
 
     int close = 0;
     int speed = 8;
+    int lastFrameTimeStamp = 0;
+    int deltaTime = 0;
 
     while (!close)
     {
+        deltaTime = SDL_GetTicks() - lastFrameTimeStamp;
+        lastFrameTimeStamp = SDL_GetTicks();
         SDL_Event event;
         int totalFrames = 8;
         int delayPerFrame = 100;
@@ -69,9 +73,11 @@ void PlayGame(SDL_Renderer *rend)
         SDL_SetRenderDrawColor(rend, 71, 45, 60, 255);
         SDL_RenderClear(rend);
 
-        world.Render(rend, &cam);
+        world.Tick(deltaTime);
+        world.Render(rend, &cam, spritesheet);
 
         SDL_RenderPresent(rend);
+
         SDL_Delay(1000 / 60);
     }
     SDL_DestroyTexture(spritesheet);

@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "config.h"
+#include "sprites.h"
 
 SDL_Rect GetSpriteRectFromSheet(const SDL_Point *pos)
 {
@@ -19,6 +20,14 @@ SDL_Rect GetSpriteRectFromSheet(const SDL_Point *pos)
     rect.x = pos->x * TILESIZE + pos->x;
     rect.y = pos->y * TILESIZE + pos->y;
     return rect;
+}
+
+SDL_Rect GetSpriteRectFromSheet(const SpriteTypes type)
+{
+    SDL_Point point;
+    point.x = type % 49;
+    point.y = type / 49;
+    return GetSpriteRectFromSheet(&point);
 }
 
 SDL_Surface *CreateBlankSurface(int w, int h)
