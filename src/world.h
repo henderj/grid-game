@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include "camera.h"
 #include "chicken.h"
+#include "sprites.h"
 #include <vector>
 
 class World
@@ -13,11 +14,8 @@ private:
     SDL_Texture *map;
     std::vector<Chicken> chickens;
 
-    const SDL_Point DIRT = {0, 0};
-    const SDL_Point DIRT_COURSE = {1, 0};
-    const SDL_Point GRASS = {5, 0};
-
-    const SDL_Point ground_types[3] = {DIRT, DIRT_COURSE, GRASS};
+    const SpriteTypes groundTypes[3] = {DIRT, DIRT_COURSE, GRASS};
+    const int groundTypesProbabilities[3] = {40, 40, 20};
 
 public:
     World(int w, int h);

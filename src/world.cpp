@@ -3,8 +3,11 @@
 #include "utils.h"
 #include "config.h"
 #include "camera.h"
+#include "sprites.h"
 #include <SDL2/SDL.h>
 #include <random>
+#include <cstdlib>
+#include <ctime>
 
 World::World(int w, int h)
 {
@@ -21,16 +24,26 @@ SDL_Surface *World::BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
 {
     SDL_Surface *mapSurface = CreateBlankSurface(this->width * TILESIZE, this->height * TILESIZE);
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(1, 3);
+    std::srand((unsigned)std::time(0));
+    auto randomGroundType = [this]() -> SpriteTypes
+    {
+        auto num = std::rand() % 100;
+        for (auto i = 0; i < sizeof(groundTypes); i++)
+        {
+            if (num < groundTypesProbabilities[i])
+            {
+                return groundTypes[i];
+            }
+            num -= groundTypesProbabilities[i];
+        }
+        return groundTypes[0];
+    };
 
     for (int x = 0; x < this->width; x++)
     {
         for (int y = 0; y < this->height; y++)
         {
-            int index = distrib(gen);
-            SDL_Point tileType = ground_types[index];
+            SpriteTypes tileType = randomGroundType();
 
             SDL_Rect destrect;
             destrect.x = x * TILESIZE;
@@ -38,7 +51,7 @@ SDL_Surface *World::BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
             destrect.w = TILESIZE;
             destrect.h = TILESIZE;
 
-            const SDL_Rect srcrect = GetSpriteRectFromSheet(&tileType);
+            const SDL_Rect srcrect = GetSpriteRectFromSheet(tileType);
 
             SDL_BlitSurface(sprites, &srcrect, mapSurface, &destrect);
         }
