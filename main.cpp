@@ -38,8 +38,8 @@ void PlayGame(SDL_Renderer *rend)
     temp = IMG_Load("colored-transparent.png");
     SDL_Texture *spritesheet = SDL_CreateTextureFromSurface(rend, temp);
 
-    World world = World(100, 100);
-    world.BuildWorld(rend, temp);
+    World::Init(100, 100);
+    World::BuildWorld(rend, temp);
 
     Camera cam;
 
@@ -73,12 +73,13 @@ void PlayGame(SDL_Renderer *rend)
         SDL_SetRenderDrawColor(rend, 71, 45, 60, 255);
         SDL_RenderClear(rend);
 
-        world.Tick(deltaTime);
-        world.Render(rend, &cam, spritesheet);
+        World::Tick(deltaTime);
+        World::Render(rend, &cam, spritesheet);
 
         SDL_RenderPresent(rend);
 
         SDL_Delay(1000 / 60);
     }
     SDL_DestroyTexture(spritesheet);
+    World::Destroy();
 }

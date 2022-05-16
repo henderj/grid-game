@@ -4,102 +4,159 @@
 #include "config.h"
 #include "camera.h"
 #include "sprites.h"
+#include "chicken.h"
 #include <SDL2/SDL.h>
 #include <random>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
 
-World::World(int w, int h)
+namespace World
 {
-    this->width = w;
-    this->height = h;
-}
-
-World::~World()
-{
-    SDL_DestroyTexture(map);
-}
-
-SDL_Surface *World::BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
-{
-    SDL_Surface *mapSurface = CreateBlankSurface(this->width * TILESIZE, this->height * TILESIZE);
-
-    std::srand((unsigned)std::time(0));
-    auto randomGroundType = [this]() -> SpriteTypes
+    namespace
     {
-        auto num = std::rand() % 100;
-        for (auto i = 0; i < sizeof(groundTypes); i++)
+        int width, height;
+        SDL_Texture *map;
+        std::vector<Chicken> chickens;
+        std::vector<SpriteTypes> mapTileTypes;
+
+        const SpriteTypes groundTypes[4] = {DIRT, DIRT_COURSE, GRASS, GRASS_LONG};
+        const int groundTypesProbabilities[4] = {50, 25, 20, 5};
+
+        int GetTileIndexFromPos(int x, int y)
         {
-            if (num < groundTypesProbabilities[i])
+            int offsetX = x + width / 2;
+            int offsetY = y + height / 2;
+            return x * height + y;
+        }
+
+        int GetTileIndexFromPos(const SDL_Point *pos)
+        {
+            return GetTileIndexFromPos(pos->x, pos->y);
+        }
+    }
+
+    void Init(int w, int h)
+    {
+        width = w;
+        height = h;
+    }
+
+    void Destroy()
+    {
+        SDL_DestroyTexture(map);
+    }
+
+    SDL_Surface *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
+    {
+        SDL_Surface *mapSurface = CreateBlankSurface(width * TILESIZE, height * TILESIZE);
+
+        std::srand((unsigned)std::time(0));
+        auto randomGroundType = [&]() -> SpriteTypes
+        {
+            auto num = std::rand() % 100;
+            for (auto i = 0; i < sizeof(groundTypes); i++)
             {
-                return groundTypes[i];
+                if (num < groundTypesProbabilities[i])
+                {
+                    return groundTypes[i];
+                }
+                num -= groundTypesProbabilities[i];
             }
-            num -= groundTypesProbabilities[i];
-        }
-        return groundTypes[0];
-    };
+            return groundTypes[0];
+        };
 
-    for (int x = 0; x < this->width; x++)
-    {
-        for (int y = 0; y < this->height; y++)
+        for (int x = 0; x < width; x++)
         {
-            SpriteTypes tileType = randomGroundType();
+            for (int y = 0; y < height; y++)
+            {
+                SpriteTypes tileType = randomGroundType();
 
-            SDL_Rect destrect;
-            destrect.x = x * TILESIZE;
-            destrect.y = y * TILESIZE;
-            destrect.w = TILESIZE;
-            destrect.h = TILESIZE;
+                SDL_Rect destrect;
+                destrect.x = x * TILESIZE;
+                destrect.y = y * TILESIZE;
+                destrect.w = TILESIZE;
+                destrect.h = TILESIZE;
 
-            const SDL_Rect srcrect = GetSpriteRectFromSheet(tileType);
+                const SDL_Rect srcrect = GetSpriteRectFromSheet(tileType);
 
-            SDL_BlitSurface(sprites, &srcrect, mapSurface, &destrect);
+                SDL_BlitSurface(sprites, &srcrect, mapSurface, &destrect);
+                mapTileTypes.push_back(tileType);
+            }
         }
-    }
-    map = SDL_CreateTextureFromSurface(rend, mapSurface);
+        map = SDL_CreateTextureFromSurface(rend, mapSurface);
 
-    SDL_Point cPos;
-    cPos.x = 0;
-    cPos.y = 0;
-    Chicken c = Chicken(cPos);
+        SDL_Point cPos;
+        cPos.x = 0;
+        cPos.y = 0;
+        Chicken c = Chicken(cPos);
 
-    chickens.push_back(c);
+        chickens.push_back(c);
 
-    return mapSurface;
-}
-
-void World::Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites)
-{
-    SDL_Rect mapRect;
-    mapRect.x = -((cam->pos.x + width / 2) * TILESIZE);
-    mapRect.y = -((cam->pos.y + height / 2) * TILESIZE);
-    mapRect.w = width * TILESIZE;
-    mapRect.h = height * TILESIZE;
-
-    for (int i = 0; i < chickens.size(); i++)
-    {
-        SDL_Point pos = chickens[i].GetPosition();
-        if (!SDL_PointInRect(&pos, &mapRect))
-            continue;
-
-        SDL_Rect chickenRect;
-        chickenRect.x = ((pos.x - cam->pos.x) * TILESIZE) + SCREEN_CENTER_X;
-        chickenRect.y = ((pos.y - cam->pos.y) * TILESIZE) + SCREEN_CENTER_Y;
-        chickenRect.w = TILESIZE;
-        chickenRect.h = TILESIZE;
-
-        SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType());
-
-        SDL_RenderCopy(rend, sprites, &spriteRect, &chickenRect);
+        return mapSurface;
     }
 
-    SDL_RenderCopy(rend, map, nullptr, &mapRect);
-}
-
-void World::Tick(int deltaTime)
-{
-    for (int i = 0; i < chickens.size(); i++)
+    SpriteTypes GetSpriteTypeAtPos(int x, int y)
     {
-        chickens[i].Tick(deltaTime);
+
+        auto index = GetTileIndexFromPos(x, y);
+        return mapTileTypes[index];
+    }
+
+    SpriteTypes GetSpriteTypeAtPos(const SDL_Point *pos)
+    {
+        return GetSpriteTypeAtPos(pos->x, pos->y);
+    }
+
+    TileData *GetDataAtPos(int x, int y)
+    {
+
+        TileData data;
+        data.type = GetSpriteTypeAtPos(x, y);
+        data.x = x;
+        data.y = y;
+        TileData *ptr = &data;
+        return ptr;
+    }
+
+    TileData *GetDataAtPos(const SDL_Point *pos)
+    {
+        return GetDataAtPos(pos->x, pos->y);
+    }
+
+    void Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites)
+    {
+        SDL_Rect mapRect;
+        mapRect.x = -((cam->pos.x + width / 2) * TILESIZE);
+        mapRect.y = -((cam->pos.y + height / 2) * TILESIZE);
+        mapRect.w = width * TILESIZE;
+        mapRect.h = height * TILESIZE;
+
+        for (int i = 0; i < chickens.size(); i++)
+        {
+            SDL_Point pos = chickens[i].GetPosition();
+            if (!SDL_PointInRect(&pos, &mapRect))
+                continue;
+
+            SDL_Rect chickenRect;
+            chickenRect.x = ((pos.x - cam->pos.x) * TILESIZE) + SCREEN_CENTER_X;
+            chickenRect.y = ((pos.y - cam->pos.y) * TILESIZE) + SCREEN_CENTER_Y;
+            chickenRect.w = TILESIZE;
+            chickenRect.h = TILESIZE;
+
+            SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType());
+
+            SDL_RenderCopy(rend, sprites, &spriteRect, &chickenRect);
+        }
+
+        SDL_RenderCopy(rend, map, nullptr, &mapRect);
+    }
+
+    void Tick(int deltaTime)
+    {
+        for (int i = 0; i < chickens.size(); i++)
+        {
+            chickens[i].Tick(deltaTime);
+        }
     }
 }
