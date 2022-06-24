@@ -1,28 +1,32 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include <vector>
 #include "sprites.h"
 #include "tileData.h"
+#include "vector2.h"
 
-class Chicken
+namespace game
 {
-private:
-    SDL_Point _position;
-    int _timeSinceLastMove;
-    TileData _grassTile;
-    // std::vector<SpriteTypes> _area;
 
-    const int _moveDelay = 500;
-    const int _viewDistance = 5;
+    class Chicken
+    {
+    private:
+        Vector2 _position;
+        int _timeSinceLastMove;
+        TileData _grassTile;
 
-    TileData *FindGrass();
+        const int _moveDelay = 500;
+        const int _viewDistance = 5;
 
-public:
-    Chicken(SDL_Point position) : _position(position), _grassTile(TileData()){};
-    ~Chicken();
+        TileData *FindGrass();
 
-    SpriteTypes GetSpriteType() const;
-    SDL_Point GetPosition() const;
-    void Tick(int deltaTime);
-};
+    public:
+        Chicken(Vector2 position) : _position(position), _grassTile(TileData()){};
+        ~Chicken();
+
+        SpriteTypes GetSpriteType() const;
+        Vector2 GetPosition() const;
+        void Tick(int deltaTime);
+    };
+
+} // namespace game

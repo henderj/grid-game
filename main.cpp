@@ -1,11 +1,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
-#include <random>
 
 #include "src/config.h"
 #include "src/world.h"
 #include "src/camera.h"
+#include "src/random.h"
 
 void PlayGame(SDL_Renderer *rend);
 
@@ -38,8 +38,10 @@ void PlayGame(SDL_Renderer *rend)
     temp = IMG_Load("colored-transparent.png");
     SDL_Texture *spritesheet = SDL_CreateTextureFromSurface(rend, temp);
 
-    World::Init(100, 100);
-    World::BuildWorld(rend, temp);
+    game::random::setSeedToTime();
+
+    game::World::Init(WORLD_WIDTH, WORLD_HEIGHT);
+    game::World::BuildWorld(rend, temp);
 
     Camera cam;
 
@@ -73,13 +75,13 @@ void PlayGame(SDL_Renderer *rend)
         SDL_SetRenderDrawColor(rend, 71, 45, 60, 255);
         SDL_RenderClear(rend);
 
-        World::Tick(deltaTime);
-        World::Render(rend, &cam, spritesheet);
+        game::World::Tick(deltaTime);
+        game::World::Render(rend, &cam, spritesheet);
 
         SDL_RenderPresent(rend);
 
         SDL_Delay(1000 / 60);
     }
     SDL_DestroyTexture(spritesheet);
-    World::Destroy();
+    game::World::Destroy();
 }

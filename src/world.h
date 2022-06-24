@@ -4,17 +4,21 @@
 #include "camera.h"
 #include "sprites.h"
 #include "tileData.h"
+#include "vector2.h"
 
-namespace World
+namespace game
 {
-    void Init(int w, int h);
-    void Destroy();
+    namespace World
+    {
+        void Init(int w, int h);
+        void Destroy();
 
-    SDL_Surface *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites);
-    void Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites);
-    void Tick(int deltaTime);
-    SpriteTypes GetSpriteTypeAtPos(const SDL_Point *pos);
-    SpriteTypes GetSpriteTypeAtPos(int x, int y);
-    TileData *GetDataAtPos(const SDL_Point *pos);
-    TileData *GetDataAtPos(int x, int y);
-};
+        SDL_Surface *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites);
+        void Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites);
+        void Tick(int deltaTime);
+        SpriteTypes GetSpriteTypeAtPos(const Vector2 &pos);
+        SpriteTypes GetSpriteTypeAtPos(int x, int y);
+        TileData *GetDataAtPos(const Vector2 &pos);
+        TileData *GetDataAtPos(int x, int y);
+    };
+}
