@@ -24,7 +24,7 @@ namespace game
         // rect.h = TILESIZE;
         // rect.x = pos->x * TILESIZE + pos->x;
         // rect.y = pos->y * TILESIZE + pos->y;
-        return Rect(TILESIZE, TILESIZE, pos.x * TILESIZE + pos.x, pos.y * TILESIZE + pos.y);
+        return Rect((pos.x * TILESIZE) + pos.x, (pos.y * TILESIZE) + pos.y, TILESIZE, TILESIZE);
     }
 
     Rect GetSpriteRectFromSheet(const SpriteTypes type)
@@ -32,7 +32,8 @@ namespace game
         // SDL_Point point;
         // point.x = type % 49;
         // point.y = type / 49;
-        return GetSpriteRectFromSheet(Vector2(type % 49, type / 49));
+        Vector2 pos = Vector2(type % 49, type / 49);
+        return GetSpriteRectFromSheet(pos);
     }
 
     SDL_Surface *CreateBlankSurface(int w, int h)

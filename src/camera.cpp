@@ -1,23 +1,33 @@
 #include "camera.h"
+
 #include <SDL2/SDL.h>
+#include <array>
 
 #include "vector2.h"
+#include "renderData.h"
+#include "config.h"
+#include "utils.h"
+#include "rect.h"
 
 namespace game
 {
 
     Camera::Camera()
     {
-        pos.x = 0;
-        pos.y = 0;
+        rect.x = 0;
+        rect.y = 0;
 
         speed = 1;
     }
 
+    Camera::~Camera()
+    {
+    }
+
     void Camera::Move(int x, int y)
     {
-        pos.x += x;
-        pos.y += y;
+        rect.x += x;
+        rect.y += y;
     }
 
     void Camera::ProcessEvent(SDL_Event *event)
@@ -44,8 +54,33 @@ namespace game
             Move(0, -moddedSpeed);
     }
 
-    Camera::~Camera()
+    int Camera::Render(SDL_Renderer *rend, SDL_Texture *worldMap,
+                       Rect &worldRect, SpriteRenderData sprites[], int spritesSize,
+                       SDL_Texture *spriteSheet)
     {
+        int errorCount = 0;
+        auto topLeft = rect.topLeft();
+        auto worldPos = Vector2(worldRect.x, worldRect.y);
+        Vector2 worldScreenPos = (worldPos - topLeft) * TILESIZE;
+        worldScreenPos.y = -worldScreenPos.y;
+        SDL_Rect mapRect = Rect(worldScreenPos.x, worldScreenPos.y,
+                                worldRect.w * TILESIZE, worldRect.h * TILESIZE)
+                               .toSDL_Rect();
+
+        for (auto i = 0; i < spritesSize; i++)
+        {
+            SpriteRenderData &sprite = sprites[i];
+            Vector2 screenPos = (sprite.pos - topLeft) * TILESIZE;
+            screenPos.y = -screenPos.y;
+
+            SDL_Rect spriteRect = GetSpriteRectFromSheet(sprite.type).toSDL_Rect();
+            SDL_Rect screenRect = Rect(screenPos.x, screenPos.y, TILESIZE, TILESIZE).toSDL_Rect();
+
+            errorCount += SDL_RenderCopy(rend, spriteSheet, &spriteRect, &screenRect);
+        }
+
+        errorCount += SDL_RenderCopy(rend, worldMap, nullptr, &mapRect);
+        return errorCount;
     }
 
 } // namespace game

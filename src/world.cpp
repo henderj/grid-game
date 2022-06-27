@@ -7,9 +7,11 @@
 #include "chicken.h"
 #include "random.h"
 #include "vector2.h"
+#include "rect.h"
 #include <SDL2/SDL.h>
 #include <cstdlib>
 #include <vector>
+#include <iostream>
 
 namespace game
 {
@@ -49,7 +51,7 @@ namespace game
             SDL_DestroyTexture(map);
         }
 
-        SDL_Surface *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
+        SDL_Texture *BuildWorld(SDL_Renderer *rend, SDL_Surface *sprites)
         {
             SDL_Surface *mapSurface = CreateBlankSurface(width * TILESIZE, height * TILESIZE);
 
@@ -71,7 +73,7 @@ namespace game
             {
                 for (int y = 0; y < height; y++)
                 {
-                    SpriteTypes tileType = randomGroundType();
+                    SpriteTypes tileType = SpriteTypes::GRASS; // randomGroundType();
 
                     SDL_Rect destrect;
                     destrect.x = x * TILESIZE;
@@ -92,7 +94,7 @@ namespace game
 
             // chickens.push_back(c);
 
-            return mapSurface;
+            return map;
         }
 
         SpriteTypes GetSpriteTypeAtPos(int x, int y)
@@ -123,11 +125,17 @@ namespace game
             return GetDataAtPos(pos.x, pos.y);
         }
 
-        void Render(SDL_Renderer *rend, Camera *cam, SDL_Texture *sprites)
+        void Render(SDL_Renderer *rend, Camera &cam, SDL_Texture *spriteSheet)
         {
+            // Rect worldRect = Rect(0, 0, width, height);
+            // SpriteRenderData data[] = {}; //{SpriteRenderData(Vector2(0, 0), SpriteTypes::CHICKEN)};
+            // int errorCount = cam.Render(rend, map, worldRect, data, 0, spriteSheet);
+
+            // std::cout << errorCount << "\n";
+
             SDL_Rect mapRect;
-            mapRect.x = -((cam->pos.x + width / 2) * TILESIZE);
-            mapRect.y = -((cam->pos.y + height / 2) * TILESIZE);
+            mapRect.x = -((cam.rect.x + width / 2) * TILESIZE);
+            mapRect.y = -((cam.rect.y + height / 2) * TILESIZE);
             mapRect.w = width * TILESIZE;
             mapRect.h = height * TILESIZE;
 
@@ -139,14 +147,14 @@ namespace game
                     continue;
 
                 SDL_Rect chickenRect;
-                chickenRect.x = ((pos.x - cam->pos.x) * TILESIZE) + SCREEN_CENTER_X;
-                chickenRect.y = ((pos.y - cam->pos.y) * TILESIZE) + SCREEN_CENTER_Y;
+                chickenRect.x = ((pos.x - cam.rect.x) * TILESIZE) + SCREEN_CENTER_X;
+                chickenRect.y = ((pos.y - cam.rect.y) * TILESIZE) + SCREEN_CENTER_Y;
                 chickenRect.w = TILESIZE;
                 chickenRect.h = TILESIZE;
 
                 SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType()).toSDL_Rect();
 
-                SDL_RenderCopy(rend, sprites, &spriteRect, &chickenRect);
+                SDL_RenderCopy(rend, spriteSheet, &spriteRect, &chickenRect);
             }
 
             SDL_RenderCopy(rend, map, nullptr, &mapRect);
