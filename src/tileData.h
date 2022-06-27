@@ -2,8 +2,11 @@
 
 #include "sprites.h"
 
-struct TileData
+namespace game
 {
-    int x, y;
-    SpriteTypes type;
-};
+    struct TileData
+    {
+        int x, y;
+        SpriteTypes type;
+    };
+}

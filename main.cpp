@@ -43,7 +43,7 @@ void PlayGame(SDL_Renderer *rend)
     game::World::Init(WORLD_WIDTH, WORLD_HEIGHT);
     game::World::BuildWorld(rend, temp);
 
-    Camera cam;
+    game::Camera cam;
 
     SDL_FreeSurface(temp);
 

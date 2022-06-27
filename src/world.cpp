@@ -79,7 +79,7 @@ namespace game
                     destrect.w = TILESIZE;
                     destrect.h = TILESIZE;
 
-                    const SDL_Rect srcrect = GetSpriteRectFromSheet(tileType);
+                    const SDL_Rect srcrect = GetSpriteRectFromSheet(tileType).toSDL_Rect();
 
                     SDL_BlitSurface(sprites, &srcrect, mapSurface, &destrect);
                     mapTileTypes.push_back(tileType);
@@ -87,9 +87,7 @@ namespace game
             }
             map = SDL_CreateTextureFromSurface(rend, mapSurface);
 
-            Vector2 cPos;
-            cPos.x = 0;
-            cPos.y = 0;
+            Vector2 cPos(0, 0);
             // Chicken c = Chicken(cPos);
 
             // chickens.push_back(c);
@@ -146,7 +144,7 @@ namespace game
                 chickenRect.w = TILESIZE;
                 chickenRect.h = TILESIZE;
 
-                SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType());
+                SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType()).toSDL_Rect();
 
                 SDL_RenderCopy(rend, sprites, &spriteRect, &chickenRect);
             }

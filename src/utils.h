@@ -1,5 +1,11 @@
 #pragma once
 
-SDL_Rect GetSpriteRectFromSheet(const SDL_Point *pos);
-SDL_Rect GetSpriteRectFromSheet(const SpriteTypes type);
-SDL_Surface *CreateBlankSurface(int w, int h);
+#include "rect.h"
+#include "vector2.h"
+
+namespace game
+{
+    Rect GetSpriteRectFromSheet(const Vector2 &pos);
+    Rect GetSpriteRectFromSheet(const SpriteTypes type);
+    SDL_Surface *CreateBlankSurface(int w, int h);
+} // namespace game

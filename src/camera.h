@@ -1,18 +1,24 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include "vector2.h"
 
-class Camera
+namespace game
 {
-private:
-    int speed;
 
-public:
-    SDL_Point pos;
+    class Camera
+    {
+    private:
+        int speed;
 
-    Camera();
-    ~Camera();
+    public:
+        Vector2 pos;
 
-    void Move(int x, int y);
-    void ProcessEvent(SDL_Event *event);
-};
+        Camera();
+        ~Camera();
+
+        void Move(int x, int y);
+        void ProcessEvent(SDL_Event *event);
+    };
+
+} // namespace game
