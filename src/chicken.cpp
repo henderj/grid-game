@@ -59,7 +59,6 @@ namespace game
 
     void Chicken::Tick(int deltaTime)
     {
-
         // if (_grassTile)
         // {
         //     _grassTile = FindGrass();

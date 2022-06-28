@@ -43,7 +43,10 @@ void PlayGame(SDL_Renderer *rend)
     game::World::Init(WORLD_WIDTH, WORLD_HEIGHT);
     SDL_Texture *map = game::World::BuildWorld(rend, temp);
 
-    game::Camera cam = game::Camera(0, 0, SCREEN_WIDTH / TILESIZE, SCREEN_HEIGHT / TILESIZE);
+    game::Camera cam = game::Camera(0, 0,
+                                    SCREEN_WIDTH / TILESIZE,
+                                    SCREEN_HEIGHT / TILESIZE,
+                                    1);
 
     SDL_FreeSurface(temp);
 
@@ -75,15 +78,8 @@ void PlayGame(SDL_Renderer *rend)
         SDL_SetRenderDrawColor(rend, 71, 45, 60, 255);
         SDL_RenderClear(rend);
 
-        SDL_Rect mapRect;
-        mapRect.x = 0;
-        mapRect.y = 0;
-        mapRect.w = WORLD_WIDTH * TILESIZE;
-        mapRect.h = WORLD_HEIGHT * TILESIZE;
-        SDL_RenderCopy(rend, map, nullptr, &mapRect);
-
         game::World::Tick(deltaTime);
-        // game::World::Render(rend, cam, spritesheet);
+        game::World::Render(rend, cam, spritesheet);
 
         SDL_RenderPresent(rend);
 

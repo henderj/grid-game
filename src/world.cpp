@@ -73,7 +73,7 @@ namespace game
             {
                 for (int y = 0; y < height; y++)
                 {
-                    SpriteTypes tileType = SpriteTypes::GRASS; // randomGroundType();
+                    SpriteTypes tileType = randomGroundType();
 
                     SDL_Rect destrect;
                     destrect.x = x * TILESIZE;
@@ -127,37 +127,9 @@ namespace game
 
         void Render(SDL_Renderer *rend, Camera &cam, SDL_Texture *spriteSheet)
         {
-            // Rect worldRect = Rect(0, 0, width, height);
-            // SpriteRenderData data[] = {}; //{SpriteRenderData(Vector2(0, 0), SpriteTypes::CHICKEN)};
-            // int errorCount = cam.Render(rend, map, worldRect, data, 0, spriteSheet);
-
-            // std::cout << errorCount << "\n";
-
-            SDL_Rect mapRect;
-            mapRect.x = -((cam.rect.x + width / 2) * TILESIZE);
-            mapRect.y = -((cam.rect.y + height / 2) * TILESIZE);
-            mapRect.w = width * TILESIZE;
-            mapRect.h = height * TILESIZE;
-
-            for (int i = 0; i < chickens.size(); i++)
-            {
-                Vector2 pos = chickens[i].GetPosition();
-                SDL_Point p = pos.toSDL_Point();
-                if (!SDL_PointInRect(&p, &mapRect))
-                    continue;
-
-                SDL_Rect chickenRect;
-                chickenRect.x = ((pos.x - cam.rect.x) * TILESIZE) + SCREEN_CENTER_X;
-                chickenRect.y = ((pos.y - cam.rect.y) * TILESIZE) + SCREEN_CENTER_Y;
-                chickenRect.w = TILESIZE;
-                chickenRect.h = TILESIZE;
-
-                SDL_Rect spriteRect = GetSpriteRectFromSheet(chickens[i].GetSpriteType()).toSDL_Rect();
-
-                SDL_RenderCopy(rend, spriteSheet, &spriteRect, &chickenRect);
-            }
-
-            SDL_RenderCopy(rend, map, nullptr, &mapRect);
+            Rect worldRect = Rect(0, 0, width, height);
+            SpriteRenderData data[] = {SpriteRenderData(Vector2(0, 0), SpriteTypes::CHICKEN)};
+            int errorCount = cam.Render(rend, map, worldRect, data, 1, spriteSheet);
         }
 
         void Tick(int deltaTime)

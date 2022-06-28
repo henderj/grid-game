@@ -12,17 +12,7 @@
 namespace game
 {
 
-    Camera::Camera()
-    {
-        rect.x = 0;
-        rect.y = 0;
-
-        speed = 1;
-    }
-
-    Camera::~Camera()
-    {
-    }
+    Camera::~Camera() {}
 
     void Camera::Move(int x, int y)
     {
@@ -49,9 +39,9 @@ namespace game
         if (key == SDL_SCANCODE_LEFT || key == SDL_SCANCODE_A)
             Move(-moddedSpeed, 0);
         if (key == SDL_SCANCODE_DOWN || key == SDL_SCANCODE_S)
-            Move(0, moddedSpeed);
-        if (key == SDL_SCANCODE_UP || key == SDL_SCANCODE_W)
             Move(0, -moddedSpeed);
+        if (key == SDL_SCANCODE_UP || key == SDL_SCANCODE_W)
+            Move(0, moddedSpeed);
     }
 
     int Camera::Render(SDL_Renderer *rend, SDL_Texture *worldMap,

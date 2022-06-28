@@ -11,14 +11,12 @@ namespace game
     class Camera
     {
     private:
-        int speed;
-
-    public:
+        float speed;
         Rect rect;
 
-        Camera();
-        Camera(Rect rect) : rect(rect) {}
-        Camera(float x, float y, float w, float h) : rect(Rect(x, y, w, h)) {}
+    public:
+        Camera(Rect rect) : rect(rect), speed(1) {}
+        Camera(float x, float y, float w, float h, float speed) : rect(Rect(x, y, w, h)), speed(speed) {}
         ~Camera();
 
         void Move(int x, int y);
