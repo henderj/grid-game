@@ -1,6 +1,7 @@
 .idea/
 build/
 .vscode/
+.ccls-cache/
 
 ##################
 # C++ .gitignore #
